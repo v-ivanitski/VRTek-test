@@ -13,7 +13,7 @@ VB_PUB_KEY = "https://www.virtualbox.org/download/oracle_vbox.asc"
 VB_PUB_KEY_NEW = "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
 
 opSys = platform.linux_distribution()[0]
-distrVersin = platform.linux_distribution()[2]
+distrVersion = platform.linux_distribution()[2]
 oldVersionDebDistr = ['wily','utopic','trusty','saucy','raring','quantal',
                       'precise','oneiric','natty','maverick','lucid','wheezy',
                       'squeeze','lenny']
@@ -39,7 +39,9 @@ def isRpmRepoExist():
 
 def addDebRepo():
     sourceList = open("/etc/apt/sources.list", "a")
-    sourceList.write("deb" + " " + VB_DEB_REPO + " " + distrName + " contrib \n")
+    #sourceList.write("deb" + " " + VB_DEB_REPO + " " + distrVersion + " contrib \n")
+    sourceList.write("deb" + " " + VB_DEB_REPO + " " + "jessie" + " contrib \n")
+
     sourceList.close()
     
 def addRpmRepo():
@@ -70,3 +72,28 @@ def install():
         os.system("yum install binutils qt gcc make patch libgomp glibc-headers " +
                   "glibc-devel kernel-headers kernel-devel dkms")
         os.system("yum install VirtualBox-5.1")
+
+def isVirtualBoxExist ():
+    if opSys.lower() in debDistr:
+        return os.system("dpkg --get-selections | grep virtualbox")
+    if opSys.lower() in rpmDistr:
+        return os.system("yum list all | grep virtualbox")
+
+def main():
+    if isVirtualBoxExist():
+        install()
+    
+    os.mkdir("./test")
+
+    config = open ("./config", "r")
+    for line in config.readlines():
+        os.system(line)
+    config.close()
+    for i in range (2,4):
+        cloneCmd = ("vboxmanage clonevm ubuntu16_04_1 --name ubuntu16_04_" + str(i) +
+                " --register") 
+        os.system(cloneCmd)
+
+main()
+
+
