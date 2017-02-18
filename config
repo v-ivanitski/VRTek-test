@@ -1,0 +1,8 @@
+vboxmanage natnetwork add --netname ubuntuNatNetwork --network 10.0.1.0/24 --enable --ipv6 off
+vboxmanage createvm --name ubuntu16_04_1 --ostype Ubuntu_64 --register
+vboxmanage modifyvm ubuntu16_04_1 --cpus 1 --memory 512 --audio none --usb off --acpi on --boot1 dvd --nic1 natnetwork
+vboxmanage createhd --filename ./test/ubuntu16_04/ubuntu16_04.vdi --size 10000
+vboxmanage storageattach ubuntu16_04_1 --storagectl ide-controller --port 0 --device 0 --type hdd --medium ./test/ubuntu16_04/ubuntu16_04.vdi
+vboxmanage storageattach ubuntu16_04_1 --storagectl ide-controller --port 0 --device 1 --type hdd --medium ./ubuntu-16.04.1-server-amd64.iso
+vboxmanage startvm --type headless ubuntu16_04_1
+
